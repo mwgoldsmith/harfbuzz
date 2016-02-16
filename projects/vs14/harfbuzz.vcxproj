@@ -270,7 +270,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -369,7 +371,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -471,7 +475,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -572,7 +578,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -678,7 +686,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -783,7 +793,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -893,7 +905,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
@@ -1002,7 +1016,9 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\$(ProjectName)"
 
-COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+COPY "$(ProjectDir)hb-version.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\src\*.h" "$(OutDir)..\..\include\$(ProjectName)"
 
 MKDIR "$(OutDir)..\..\licenses"
 COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
