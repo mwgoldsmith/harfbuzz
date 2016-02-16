@@ -185,22 +185,99 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_WINDOWS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfreetyped.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -208,21 +285,98 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_WINDOWS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDataBaseFileName>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Lib>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfreetyped.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -232,22 +386,99 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_WINDOWS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfreetype.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -257,21 +488,98 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_WINDOWS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Lib>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfreetype.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">
     <ClCompile>
@@ -279,11 +587,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_DEBUG;_WINDOWS;_USRDLL;WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -293,12 +603,89 @@
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetyped.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
+      <ModuleDefinitionFile>libharfbuzz.def</ModuleDefinitionFile>
+      <AdditionalOptions>/IGNORE:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
     <ClCompile>
@@ -306,11 +693,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_DEBUG;_WINDOWS;_USRDLL;WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -320,11 +709,88 @@
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetyped.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>libharfbuzz.def</ModuleDefinitionFile>
+      <AdditionalOptions>/IGNORE:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
     <ClCompile>
@@ -334,11 +800,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -348,14 +816,91 @@
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>libharfbuzz.def</ModuleDefinitionFile>
+      <AdditionalOptions>/IGNORE:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <ClCompile>
@@ -365,11 +910,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\include;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..;$(ProjectDir)src;$(ProjectDir)..\..\src\hb-ucdn;$(OutDir)..\..\include\freetype2;$(OutDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;NDEBUG;_WINDOWS;_USRDLL;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformationFile>$(IntDir)bsc\</BrowseInformationFile>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4996;4800;4244;4018;4146;4267;4334;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -379,14 +926,174 @@
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;usp10.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>libharfbuzz.def</ModuleDefinitionFile>
+      <AdditionalOptions>/IGNORE:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>
+IF EXIST "$(ProjectDir)..\..\config.h" (
+  DEL "$(ProjectDir)..\..\config.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-version.h" (
+  DEL "$(ProjectDir)..\..\src\hb-version.h"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.hh"
+)
+
+IF EXIST "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh" (
+  DEL "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.hh"
+)
+
+IF EXIST "$(OutDir)..\..\licenses\$(ProjectName).txt" (
+  DEL "$(OutDir)..\..\licenses\$(ProjectName).txt"
+)
+
+IF EXIST "$(OutDir)..\..\include\$(ProjectName)" (
+  RD /s /q "$(OutDir)..\..\include\$(ProjectName)"
+)
+
+IF NOT EXIST "$(ProjectDir)src" (
+  MKDIR "$(ProjectDir)src"
+)
+
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-json.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-json.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-json.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-buffer-deserialize-text.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-buffer-deserialize-text.hh" "$(ProjectDir)..\..\src\hb-buffer-deserialize-text.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-indic-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-indic-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-myanmar-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-myanmar-machine.rl"
+)
+IF NOT EXIST "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" (
+  ragel -e -F1 -o "$(ProjectDir)src\hb-ot-shape-complex-sea-machine.hh" "$(ProjectDir)..\..\src\hb-ot-shape-complex-sea-machine.rl"
+)
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+ECHO Off
+SETLOCAL EnableDelayedExpansion EnableExtensions
+
+MKDIR "$(OutDir)..\..\include"
+MKDIR "$(OutDir)..\..\include\$(ProjectName)"
+
+COPY "$(ProjectDir)..\..\*.h" "$(OutDir)..\..\include\$(ProjectName)"
+
+MKDIR "$(OutDir)..\..\licenses"
+COPY "$(ProjectDir)..\..\COPYING" "$(OutDir)..\..\licenses\$(ProjectName).txt" 
+
+ENDLOCAL
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\hb-atomic-private.hh" />
+    <ClInclude Include="src\hb-buffer-deserialize-json.hh" />
+    <ClInclude Include="src\hb-buffer-deserialize-text.hh" />
+    <ClInclude Include="..\..\src\hb-buffer-private.hh" />
+    <ClInclude Include="..\..\src\hb-face-private.hh" />
+    <ClInclude Include="..\..\src\hb-font-private.hh" />
+    <ClInclude Include="..\..\src\hb-ft.h" />
+    <ClInclude Include="..\..\src\hb-mutex-private.hh" />
+    <ClInclude Include="..\..\src\hb-object-private.hh" />
+    <ClInclude Include="..\..\src\hb-open-file-private.hh" />
+    <ClInclude Include="..\..\src\hb-open-type-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-cmap-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-glyf-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-head-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-hhea-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-hmtx-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-common-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-gdef-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-gpos-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-gsub-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-gsubgpos-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-jstf-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-layout-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-map-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-maxp-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-name-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-arabic-fallback.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-arabic-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-arabic-table.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-arabic-win1256.hh" />
+    <ClInclude Include="src\hb-ot-shape-complex-indic-machine.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-indic-private.hh" />
+    <ClInclude Include="src\hb-ot-shape-complex-myanmar-machine.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-private.hh" />
+    <ClInclude Include="src\hb-ot-shape-complex-sea-machine.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-complex-use-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-fallback-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-normalize-private.hh" />
+    <ClInclude Include="..\..\src\hb-ot-shape-private.hh" />
+    <ClInclude Include="..\..\src\hb-private.hh" />
+    <ClInclude Include="..\..\src\hb-set-private.hh" />
+    <ClInclude Include="..\..\src\hb-shape-plan-private.hh" />
+    <ClInclude Include="..\..\src\hb-shaper-impl-private.hh" />
+    <ClInclude Include="..\..\src\hb-shaper-list.hh" />
+    <ClInclude Include="..\..\src\hb-unicode-private.hh" />
+    <ClInclude Include="..\..\src\hb-utf-private.hh" />
+    <ClInclude Include="..\..\src\ucdn.h" />
+    <ClInclude Include="..\..\src\unicodedata_db.h" />
+    <ClInclude Include="hb-version.h" />
+    <ClInclude Include="config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\hb-blob.cc" />
+    <ClCompile Include="..\..\src\hb-buffer-serialize.cc" />
+    <ClCompile Include="..\..\src\hb-buffer.cc" />
+    <ClCompile Include="..\..\src\hb-common.cc" />
+    <ClCompile Include="..\..\src\hb-fallback-shape.cc" />
+    <ClCompile Include="..\..\src\hb-font.cc" />
+    <ClCompile Include="..\..\src\hb-ft.cc" />
+    <ClCompile Include="..\..\src\hb-ot-layout.cc" />
+    <ClCompile Include="..\..\src\hb-ot-map.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-arabic.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-sea.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-default.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-indic-table.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-indic.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-myanmar.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-complex-thai.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-fallback.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape-normalize.cc" />
+    <ClCompile Include="..\..\src\hb-ot-shape.cc" />
+    <ClCompile Include="..\..\src\hb-ot-tag.cc" />
+    <ClCompile Include="..\..\src\hb-set.cc" />
+    <ClCompile Include="..\..\src\hb-shape-plan.cc" />
+    <ClCompile Include="..\..\src\hb-shape.cc" />
+    <ClCompile Include="..\..\src\hb-shaper.cc" />
+    <ClCompile Include="..\..\src\hb-ucdn.cc" />
+    <ClCompile Include="..\..\src\hb-ucdn\ucdn.c" />
+    <ClCompile Include="..\..\src\hb-unicode.cc" />
+    <ClCompile Include="..\..\src\hb-uniscribe.cc" />
+    <ClCompile Include="..\..\src\hb-warning.cc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
